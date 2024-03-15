@@ -45,7 +45,7 @@ mvn exec:java -Dexec.mainClass="csc435.app.FileRetrievalServer" -Dexec.args="loc
 ```bash
 >list
 ```
-## quit
+## quit (recommended: quit the clients before quitting the server)
 ```bash
 >quit
 ```
@@ -125,7 +125,7 @@ example for searching two words
 
 
 ```
-## quit
+## quit (recommended: quit the clients before quitting the server)
 ```bash
 >quit
 ```
