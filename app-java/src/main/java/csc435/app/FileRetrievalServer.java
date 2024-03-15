@@ -8,7 +8,7 @@ public class FileRetrievalServer
         ServerSideEngine engine = new ServerSideEngine(store);
         ServerAppInterface appInterface = new ServerAppInterface(engine);
         
-        engine.initialize();
+        engine.initialize(args[0],Integer.parseInt(args[1]));
         appInterface.readCommands();
     }
 }

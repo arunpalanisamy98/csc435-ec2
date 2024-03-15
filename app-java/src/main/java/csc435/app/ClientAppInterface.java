@@ -1,7 +1,9 @@
 package csc435.app;
 
 import java.lang.System;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class ClientAppInterface {
     private ClientSideEngine engine;
@@ -13,36 +15,95 @@ public class ClientAppInterface {
         // keep track of the connection with the client
     }
 
-    public void readCommands() {
+    public void readCommands() throws Exception{
         // TO-DO implement the read commands method
         Scanner sc = new Scanner(System.in);
         String command;
-        
+
         while (true) {
             System.out.print("> ");
-            
+
             // read from command line
             command = sc.nextLine();
 
-            // if the command is quit, terminate the program       
+            // if the command is quit, terminate the program
             if (command.compareTo("quit") == 0) {
+                if(!engine.getIsConnected()){
+                    System.out.println("not connected to any server, but shutting down the client");
+                    System.exit(0);
+                }
+                engine.closeConnection();
                 break;
             }
-            
+
+            // if the command begins with connect, connect to the given server
+            if (command.length() >= 7 && command.substring(0, 7).compareTo("connect") == 0) {
+                String[] arr = command.split(" ");
+                if(arr.length!=3){
+                    System.out.println("Invalid args");
+                    continue;
+                }
+                String ip = arr[1];
+                String port1 = arr[2];
+                engine.openConnection(ip,port1);
+                continue;
+            }
+
             // if the command begins with index, index the files from the specified directory
             if (command.length() >= 5 && command.substring(0, 5).compareTo("index") == 0) {
-                // TO-DO implement index operation
-                // call the index method on the serve side engine and pass the folder to be indexed
+                if(!engine.getIsConnected()){
+                    System.out.println("not connected to any server");
+                    continue;
+                }
+                String[] arr = command.split(" ");
+                if(arr.length != 2) {
+                    System.out.println("Invalid command");
+                    continue;
+                }
+                String path = arr[1].trim();
+                String datasetNo = "";
+                if(path.contains("Dataset1")){
+                    datasetNo="1";
+                }else if(path.contains("Dataset2")){
+                    datasetNo="2";
+                }else if(path.contains("Dataset3")){
+                    datasetNo="3";
+                }
+                else if(path.contains("Dataset4")){
+                    datasetNo="4";
+                }
+                else if(path.contains("Dataset5")){
+                    datasetNo="5";
+                }else{
+                    datasetNo="unknown dataset";
+                }
+
+                long startTime = System.currentTimeMillis();
+                engine.indexFiles(path,datasetNo);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Indexing took " + (endTime - startTime)/1000 + " seconds");
                 continue;
             }
 
             // if the command begins with search, search for files that matches the query
             if (command.length() >= 6 && command.substring(0, 6).compareTo("search") == 0) {
-                // TO-DO implement index operation
-                // extract the terms and call the server side engine method to search the terms for files
+                if(!engine.getIsConnected()){
+                    System.out.println("not connected to any server");
+                    continue;
+                }
+                String[] arr=command.split(" ");
+                Set<String> words = new HashSet<>();
+                int size = 0;
+                for(String s: arr){
+                    if(s.equals("search")||s.equals("AND")){
+                        continue;
+                    }
+                    words.add(s);
+                    size+=1;
+                }
+                engine.searchFiles(words,size);
                 continue;
             }
-
             System.out.println("unrecognized command!");
         }
 

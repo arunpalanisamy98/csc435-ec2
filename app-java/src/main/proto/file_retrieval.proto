@@ -1,31 +1,50 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "csc435.app";
+option java_package = "csc435.app.protogen";
 option java_outer_classname = "FileRetrievalProto";
 
 // TO-DO update the service definition
 service FileRetrieval {
     rpc Index(IndexRequest) returns (IndexReply) {}
     rpc Search(SearchRequest) returns (SearchReply) {}
+    rpc Connect(ConnectRequest) returns (ConnectReply) {}
 }
 
-// TO-DO update the IndexRequest message to contain the local index or files to index
-message IndexRequest {
-    string message = 1;
+message ConnectRequest {
+    enum Type {
+        CONNECT = 0;
+        DISCONNECT = 1;
+    }
+    Type type = 1;
+    string clientId = 2;
 }
+message ConnectReply {
+    bool connected = 2;
+}
+message IndexRequest {
+    string filename = 1;
+    map<string, int32> wordCount = 2;
+}
+
 
 // TO-DO update the IndexReply message to contain the return values of indexing
 message IndexReply {
-    string message = 1;
+    bool indexed = 1;
 }
 
 // TO-DO update the SearchRequest message to contain the term to be searched
 message SearchRequest {
-    string message = 1;
+    enum Type{
+        SINGLE = 0;
+        DOUBLE = 1;
+    }
+    Type type = 1;
+    string word1 = 2;
+    string word2 = 3;
 }
 
 // TO-DO update the SearchReply message to contain the results of a single term search
 message SearchReply {
-    string message = 1;
+    repeated string files = 1;
 }

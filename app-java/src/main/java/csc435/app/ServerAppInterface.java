@@ -16,11 +16,9 @@ public class ServerAppInterface {
         // TO-DO implement the read commands method
         Scanner sc = new Scanner(System.in);
         String command;
-        
+
         while (true) {
             System.out.print("> ");
-            
-            // read from command line
             command = sc.next();
 
             // if the command is quit, terminate the program       
@@ -29,6 +27,11 @@ public class ServerAppInterface {
                 break;
             }
 
+            // if the command begins with list, list all the connected clients
+            if (command.length() >= 4 && command.substring(0, 4).compareTo("list") == 0) {
+                engine.list();
+                continue;
+            }
             System.out.println("unrecognized command!");
         }
 
